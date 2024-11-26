@@ -7,12 +7,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
+builder.Services.AddCors();
+
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+
+app.UseCors(o =>o.AllowAnyOrigin());
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
