@@ -1,5 +1,6 @@
 ## git rm -r --cached
 
+SampleApp.API/appsettings.json
 .vscode
 
 /bin/
