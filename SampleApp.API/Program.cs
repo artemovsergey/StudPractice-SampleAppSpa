@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SampleApp.API.Data;
 using SampleApp.API.Interfaces;
 using SampleApp.API.Repositories;
 
@@ -7,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
+builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
 builder.Services.AddCors();
 
 
