@@ -11,8 +11,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-//builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
-builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
+//builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
 builder.Services.AddCors();
 

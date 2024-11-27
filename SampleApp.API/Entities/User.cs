@@ -8,6 +8,6 @@ public class User : Base{
     [SampleApp.API.Validations.MaxLength(10)]
     public string Name {get ;set;} = String.Empty;
     public string Login {get; set;} = String. Empty;
-    public byte[] PasswordHash {get; set;}
-    public byte[] PasswordSalt {get; set;}
+    public byte[] PasswordHash {get; set;} = default!;
+    public byte[] PasswordSalt {get; set;} = default!;
 }
