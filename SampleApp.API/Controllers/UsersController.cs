@@ -46,7 +46,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult GetUser(){
+    public ActionResult GetUsers(){
         return Ok(_repo.GetUsers());
     }
     

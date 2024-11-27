@@ -1,0 +1,33 @@
+<div class="auth">
+    <div>
+        <div>
+            <img src="logo.webp" height="200" width="200"/>
+        </div>
+  
+        <div>
+            <form (ngSubmit)= "login()">
+            
+                <p>
+                    <mat-form-field>
+                        <mat-label>Login</mat-label>
+                        <input matInput name="login" type="text" [(ngModel)] = "model.login" autocomplete="off" />
+                    </mat-form-field>
+                </p>
+                <p>
+                    <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input matInput name="password" type="password" [(ngModel)] ="model.password" autocomplete="off" />
+                    </mat-form-field>
+                </p>
+                <button mat-flat-button color="primary" type="submit">
+                    <mat-icon>
+                    login
+                    </mat-icon>
+                    Войти
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
