@@ -1,4 +1,8 @@
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SampleApp.API.Dto;
 using SampleApp.API.Entities;
 using SampleApp.API.Interfaces;
 using SampleApp.API.Validations;
@@ -8,22 +12,33 @@ namespace SampleApp.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
-
 {
     private readonly IUserRepository _repo;
-    public UsersController(IUserRepository repo)
-
+    private readonly ITokenService _tokenService;
+    public UsersController(IUserRepository repo, ITokenService tokenService)
     {
+       _tokenService = tokenService;
        _repo = repo;
     }
 
+    [Authorize]
     [HttpPost]
-    public ActionResult CreateUser(User user){
+    public ActionResult CreateUser(UserDto userDto){
+
+        using var hmac = new HMACSHA512();
+        
+        var user = new User(){
+           Login = userDto.Login,
+           PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
+           PasswordSalt = hmac.Key,
+           Token = _tokenService.CreateToken(userDto.Login)
+        };
+
 
         var validator = new FluentValidator();
         var result = validator.Validate(user);
         if(!result.IsValid){
-            throw new Exception($"{result.Errors.First().ErrorMessage}");
+            throw new Exception($"Ошибка: {result.Errors.First().ErrorMessage}");
         }
 
         return Ok(_repo.CreateUser(user));
