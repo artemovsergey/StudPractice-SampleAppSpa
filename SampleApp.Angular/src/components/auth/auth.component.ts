@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButton, MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../app/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -16,10 +17,14 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 })
 export class AuthComponent {
 
-  model:any = {}
+  model: any = {}
+  router: Router = new Router()
+
+  constructor(private authService: AuthService){}
 
   login(){
-    console.log(this.model)
+    this.authService.login(this.model).subscribe({next: r => {this.router.navigate(["home"])}, error: e => console.log(e)})
   }
 
+  
 }
