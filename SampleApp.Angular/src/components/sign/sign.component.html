@@ -1,22 +1,44 @@
 <div class="sign">
+
+
     <div>
+
+        <div *ngIf="signForm.invalid">
+            <p>
+                Значение формы: {{signForm.value | json}}
+            </p>
+            <p>
+                Статус формы: {{signForm.status| json}}
+            </p>
+            <p>
+                Проверка логина: {{signForm.hasError('checkConfirmLogin') | json }}
+            </p>
+        </div>
+        
+
         <div>
-            <img src="logo.webp" height="200" width="200"/>
+            <img src="logo.png" height="200" width="200"/>
+        </div>
+
+        <div class="alert" *ngIf="signForm.hasError('checkConfirmLogin') && (signForm.touched || signForm.dirty)">
+            <label>
+                Недопустимый логин пользователя!
+            </label>
         </div>
   
         <div>
-            <form (ngSubmit)= "sign()">
+            <form [formGroup]="signForm" (ngSubmit)= "sign()">
             
                 <p>
                     <mat-form-field>
                         <mat-label>Login</mat-label>
-                        <input matInput name="login" type="text" [(ngModel)] = "model.login" autocomplete="off" />
+                        <input matInput formControlName="login" type="text" autocomplete="off" />
                     </mat-form-field>
                 </p>
                 <p>
                     <mat-form-field>
                         <mat-label>Password</mat-label>
-                        <input matInput name="password" type="password" [(ngModel)] ="model.password" autocomplete="off" />
+                        <input matInput formControlName="password" type="password" autocomplete="off" />
                     </mat-form-field>
                 </p>
                 <button mat-flat-button color="primary" type="submit">
@@ -29,5 +51,8 @@
         </div>
 
     </div>
+
+
+
 
 </div>
