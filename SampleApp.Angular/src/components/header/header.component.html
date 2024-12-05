@@ -12,6 +12,20 @@
           people
       </mat-icon>
       Пользователи
+    </button>
+
+    <button mat-button [routerLink] = "['/auth']">
+      <mat-icon>
+          input
+      </mat-icon>
+      Авторизация
+    </button>
+
+  <button *ngIf="authService.currentUser$ | async" mat-button type="button" (click)="authService.logout()">
+    <mat-icon>
+      logout
+    </mat-icon>
+    Выход
   </button>
   
   </mat-toolbar>

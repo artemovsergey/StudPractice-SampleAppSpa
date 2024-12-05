@@ -45,7 +45,7 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpPost]
     public ActionResult CreateUser(UserDto userDto){
 
