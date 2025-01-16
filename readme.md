@@ -77,237 +77,32 @@ public interface IUserRepository
 
 ```Csharp
 public class UserLocalRepository : IUserRepository
-
 {
-    public IList<User> Users { get; set; } = new List<User>();
-  
-    public User CreateUser(User user)
-    {
-        user.Id = Guid.NewGuid();
-        Users.Add(user);
-        return user;
-    }
-
-    public bool DeleteUser(Guid id)
-    {
-        var result = FindUserById(id);
-        Users.Remove(result);
-        return true;
-    }
-
-    public User EditUser(User user, Guid id)
-    {
-        var result = FindUserById(id);
-        result.Name = user.Name;
-        return result;
-    }
-
-    public User FindUserById(Guid id)
-    {
-        var result = Users.Where(u => u.Id == id).FirstOrDefault();
-
-        if (result == null)
-        {
-            throw new Exception($"Нет пользователя с id = {id}");
-        }
-
-        return result;
-    }
-
-    public List<User> GetUsers()
-    {
-        return (List<User>)Users;
-    }
+    // implements mock
 }
 ```
 
-**Примечание**: 
-
-- очистите папку ```Controllers``` от файла WeatherForecastController и файл модели. 
-
-
-# Unit Tests
-
-Для реализации unit-тестирования функциональности методов репозитория создадим проект:
-
-```
-dotnet new xunit -o SampleApp.Tests
-```
-
-- добавьте проект SampleApp.Tests в решение. Проверьте какие проекты находятся в решении командой dotnet sln list
-- добавьте ссылку в проект с тестами на проект API
-
-```
-dotnet add .\SampleApp.Tests\ reference .\SampleApp.API
-```
-
-- удалите файл ```UnitTest1``` в проекте с тестами
-
-- создайте класс ```UserLocalRepositoryTests``` в тестовом проекте
-
-```Csharp
-public class UserLocalRepositoryTests
-
-{
-    private readonly UserLocalRepository _userLocalRepository;
-    public UserLocalRepositoryTests()
-    {
-        _userLocalRepository = new UserLocalRepository();
-    
-    }
-
-    [Fact]
-    public void CreateUser_ShouldReturnNewUserWithGeneratedId()
-    {
-        // Arrange
-        var newUser = new User { Name = "Test User" };
-        // Act
-        var createdUser = _userLocalRepository.CreateUser(newUser);
-
-        // Assert
-        Assert.NotNull(createdUser);
-        Assert.NotEqual(Guid.Empty, createdUser.Id);
-        Assert.Equal(newUser.Name, createdUser.Name);
-    }
-
-    [Fact]
-    public void DeleteUser_ShouldReturnTrueAndRemoveUser()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
- 
-        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
-        UserLocalRepository.Users.Add(testUser);
-
-
-        // Act
-        bool result = UserLocalRepository.DeleteUser(testUser.Id);
- 
-
-        // Assert
-        Assert.True(result);
-        Assert.Empty(UserLocalRepository.Users);
-
-    }
-
-    [Fact]
-    public void EditUser_ShouldUpdateExistingUser()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
-      
-        var originalUser = new User { Id = Guid.NewGuid(), Name = "Original User" };
-        UserLocalRepository.Users.Add(originalUser);
-
-
-        // Act
-        var editedUser = new User { Id = originalUser.Id, Name = "Edited User" };
-        var result = UserLocalRepository.EditUser(editedUser, originalUser.Id);
-      
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal("Edited User", result.Name);
-        Assert.Single(UserLocalRepository.Users);
-   
-    }
-
-    [Fact]
-    public void FindUserById_ShouldReturnUserByValidId()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
-      
-        var testUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
-        UserLocalRepository.Users.Add(testUser);
- 
-
-        // Act
-        var foundUser = UserLocalRepository.FindUserById(testUser.Id);
-
-
-        // Assert
-        Assert.NotNull(foundUser);
-        Assert.Equal(testUser.Id, foundUser.Id);
-        Assert.Equal(testUser.Name, foundUser.Name);
-    }
-
-    [Fact]
-    public void FindUserById_ShouldThrowExceptionForInvalidId()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
-      
-
-        // Act & Assert
-        Assert.Throws<Exception>(() => UserLocalRepository.FindUserById(Guid.NewGuid()));
-
-    }
-
-    [Fact]
-    public void GetUsers_ShouldReturnAllUsers()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
-      
-        var testUser1 = new User { Id = Guid.NewGuid(), Name = "User 1" };
-        var testUser2 = new User { Id = Guid.NewGuid(), Name = "User 2" };
-        UserLocalRepository.Users.Add(testUser1);
-        UserLocalRepository.Users.Add(testUser2);
-
-
-        // Act
-        var users = UserLocalRepository.GetUsers();
-
-
-        // Assert
-        Assert.NotNull(users);
-        Assert.Equal(2, users.Count);
-        Assert.Contains(testUser1, users);
-        Assert.Contains(testUser2, users);
-    }
-
-    [Fact]
-    public void FindUserById_ShouldThrowExceptionForNonExistentId()
-    {
-        // Arrange
-        var UserLocalRepository = new UserLocalRepository();
- 
-        // Act & Assert
-        Assert.Throws<Exception>(() => UserLocalRepository.FindUserById(Guid.NewGuid()));
-       
-    }
-}
-```
-
-**Замечание**: если Visual Code перестанет обнаруживать ошибки в коде, то нажмите F1 и выполните команду в строке ```.NET: Restart Language Server```. Проверьте также наличие расширения C#.
-
-- запуск всех тестов ```dotnet test```
-- просмотр все доступных тестов ```dotnet test --list-tests```
-- запуск конкретного списка по фильтру ```dotnet test --filter "FullyQualifiedName=SampleApp.Tests.UserLocalRepositoryTests.CreateUser_ShouldReturnNewUserWithGeneratedId" ```
+**Примечание**: очистите папку ```Controllers``` от файла WeatherForecastController и файл модели WeatherForecast. 
 
 
 # Создание UsersController для управления пользователями
 
-```Csharp
+- создайте папку Controllers
 
+```Csharp
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
-
 {
     private readonly IUserRepository _repo;
     public UsersController(IUserRepository repo)
-
     {
        _repo = repo;
     }
 
     [HttpPost]
     public ActionResult CreateUser(User user){
-
         return Ok(_repo.CreateUser(user));
-
     }
     
     [HttpGet]
@@ -321,23 +116,30 @@ public class UsersController : ControllerBase
        return Ok(_repo.EditUser(user, user.Id));
     }
 
-
     [HttpGet("{id}")]
-    public ActionResult GetUserById(Guid id){
+    public ActionResult GetUserById(int id){
        return Ok(_repo.FindUserById(id));
     }
 
-
     [HttpDelete]
-    public ActionResult DeleteUser(Guid id){
+    public ActionResult DeleteUser(int id){
         return Ok(_repo.DeleteUser(id));
     }
 
 }
 ```
 
-- запустите API: ```dotnet run --project SampleApp.API``` и в средстве Swagger по адресу ```http://localhost:[port]/swagger/index.html``` и попробуйте выполнить конечную точку для получения всех пользователей.
+- запустите API: ```dotnet run --project SampleApp.API``` и в средстве Swagger по адресу ```http://localhost:[port]/swagger/index.html``` попробуйте выполнить конечную точку для получения всех пользователей.
 
+**Замечание**: для .net9 по умолчанию swagger отсутствует, поэтому надо его подключить пакетом ```Swashbuckle.AspNetCore``` и настроить в Program.cs:
+
+```Csharp
+builder.Services.AddSwaggerGen();
+//...
+var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+```
 
 Вы должны получить ошибку:
 
@@ -359,10 +161,10 @@ Unable to resolve service for type 'SampleApp.API.Interfaces.IUserRepository' wh
     }
 ```
 
-реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервимов в проекте API.
+реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервиcов в проекте API.
 
 ```Csharp
-builder.Services.AddSingleton<IUserRepository, UserLocalRepository>();
+builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
 ```
 
 - запустите проект и проверьте все конечные точки по пути ```http://localhost:[port]/swagger/index.html```
