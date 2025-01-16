@@ -6,6 +6,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
+builder.Services.AddCors();
+
 
 var app = builder.Build();
 app.UseSwagger();
@@ -13,6 +15,7 @@ app.UseSwaggerUI();
 
 app.MapOpenApi();
 app.UseHttpsRedirection();
+app.UseCors(option => option.AllowAnyOrigin());
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

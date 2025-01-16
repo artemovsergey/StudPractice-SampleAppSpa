@@ -129,7 +129,7 @@ public class UsersMemoryRepository : IUserRepository
 
 ```Csharp
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _repo;
