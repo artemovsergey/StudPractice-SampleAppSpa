@@ -1,352 +1,358 @@
-# Начало работы
+# Sprint 2. Введение в Angular
 
-- откройте командную строку, создайте папку SampleApp и перейдите в нее
-- выполните команду ```code .``` для открытия проекта SampleApp в Visual Code
+# Создание проекта Angular
 
-# Подготовка редактора Visual Code
-- File - Autosave
+- установите инструмент командной строки Angular ```npm install -g @angular/cli@latest```
 
-**Замечание**: при работе со средой .NET можно применять Visual Studio. Выбор редактора для курса - это предпочтение преподавателя.
+- создайте проект новый проект Angular с помощью команды ```ng new SampleApp.Angular```
 
-# Использование dotnet cli для построения архитектуры приложения
+Примечание: при создании проекта надо выбрать конфигурацию: препроцессор scss, ssr не выбирать
 
-- создайте папку ```SampleApp``` и перейдите в нее в командной строке.
-- посмотрите с помощью команды ```dotnet new list``` список доступных проектов и создайте проект ```webapi``` с именем ```SampleApp.API``` командой:  ```dotnet new webapi -o SampleApp.API```
+- внести в общий gitignore папку ```node_modules``` и файл ```.angular```
 
-**Замечание**: в приложении будет использоваться версия .net 7, в версии 8 или 9 данная команда по умолчанию не подключает функциональность для работы с контроллерами API, поэтому для включения контроллеров в версии надо использовать флаг ```-controllers```. Чтобы проверить версию наберите команду: ```dotnet --version```.
 
-- добавьте файл решения, находясь в папке рабочей директории, командой ```dotnet new sln```
 
-- добавьте в решение проект API - ```dotnet sln add SampleApp.API```
+# Обзор архитектуры приложения Angular
 
-**Замечание**: можно добавить все проекты в решение одной командой ```dotnet sln add (ls -r **/**.csproj)```. Эта команда работает в Powershell.
+- проверить работоспособность сервера командой ```ng serve```
 
-- добавьте файл ```.gitignore``` (на уровне проекта API) - ```dotnet new gitignore```
+**Замечание**: при первом запуске не отправлять данные по статистике
 
-- создайте файл ```.gitignore``` (на уровне рабочей корневой директории) и поместите в ```.gitignore``` следующие настройки:
 
+# Создание компонента
+
+- создайте в папке ```src``` новую папку ```components``` и перейдите в нее.
+- создайте новый компонент ```home``` командой ```ng g c home --skip-tests```. 
+
+
+
+
+# Рендеринг компонента в главном компоненте
+
+В шаблоне компонента ```app``` подключите новый компонент ```home```.
+
+app.component.html
+```html
+<app-home/>
 ```
-## git rm -r --cached
-.vscode
-```
 
-Для проверки работоспособности приложения запустите API: ```dotnet run --project SampleApp.API```.
-**Замечание**: для горячей перезагрузки сервера примените команду ```dotnet watch run --project SampleApp.API```.
+В компоненте ```app``` импортируйте компонент ```home```
 
+```ts
+import { Component } from '@angular/core';
+import { HomeComponent } from "../components/home/home.component";
 
-У вас по конечной точке http://localhost:5290/weatherforecast должен выводится результат в формате json.
-
-**Примечание**: номер порта может быть другим.
-
-- добавьте в решение файл ```readme.md```
-
-- фиксация изменений в git с сообщением: "Создание начального проекта API" 
-
-- от мастер-ветки создать ветку ```git switch -c sprint1``` и перейти в нее ```git switch sprint1```. Далее работа будет вестись в этой ветке. Чтобы просмотреть все ветки в проекте применяется команда ```git branch```.
-
-
-## Разработка домена приложения. Модель пользователя
-
-Создайте в проекте ```SampleApp.API``` папку ```Entities```, в которой создайте класс **User**
-
-```Csharp
-public class User{
-    public int Id {get; set;}
-    public string Name {get ;set;} = String.Empty;
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [HomeComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
+})
+export class AppComponent {
+  title = 'SampleApp.Angular';
 }
 ```
 
-# Интерфейсы
+# Настройка HttpClient
 
-Создайте папку ```Interfaces``` и поместите следующий интерфейс IUserRepository
+Найдите в проекте файл конфигурации главного компонента ```app.config.ts``` и замените в нем код. Здесь определяется провайдер для работы с http.
 
-```Csharp
-public interface IUserRepository
-{
-   User CreateUser(User user);
-   List<User> GetUsers();
-   User EditUser(User user, int id);
-   bool DeleteUser(int id);
-   User FindUserById(int id);
+app.config.ts
+```ts
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+
+            ...
+            provideHttpClient(withInterceptorsFromDi())
+            ...
+
+            ]
+};
+```
+
+# Observable. Подписка на запрос
+
+- создайте папку ```models```, в которой создайте файл ```user.ts```
+
+```ts
+export default interface User {
+  id: string;
+  name: string;
 }
 ```
 
-## Реализация CRUD в UserRepository
+- в папке ```src``` создайте папку ```services``` и выполните команду ```ng g s userslocal --skip-tests```
 
-Создайте папку ```Repositories``` и поместите там следующий класс ```UsersMemoryRepository```, который будет имплементировать (реализовывать) интерфейс ```IUserRepository```.
+В результате сгенерируется файл сервиса.
 
-```Csharp
-public class UsersMemoryRepository : IUserRepository
-{
-    public IList<User> Users { get; set; } = new List<User>();
-  
-    public User CreateUser(User user)
-    {
-        user.Id = 1;
-        Users.Add(user);
-        return user;
-    }
+```ts
+@Injectable({
+  providedIn: 'root'
+})
+export class UsersLocalService {
 
-    public bool DeleteUser(int id)
-    {
-        var result = FindUserById(id);
-        Users.Remove(result);
-        return true;
-    }
+  getLocalUsers(): User[] {
+    var users = [{ "id": "1", "name": "user1" },
+                 { "id": "2", "name": "user2" },
+                 { "id": "3", "name": "user3" }]
+    return users;
 
-    public User EditUser(User user, int id)
-    {
-        var result = FindUserById(id);
-        result.Name = user.Name;
-        return result;
-    }
-
-    public User FindUserById(int id)
-    {
-        var result = Users.Where(u => u.Id == id).FirstOrDefault();
-
-        if (result == null)
-        {
-            throw new Exception($"Нет пользователя с id = {id}");
-        }
-
-        return result;
-    }
-
-    public List<User> GetUsers()
-    {
-        return (List<User>)Users;
-    }
-}
-```
-
-**Примечание**: очистите папку ```Controllers``` от файла WeatherForecastController и файл модели WeatherForecast. 
-
-
-# Создание UsersController для управления пользователями
-
-- создайте папку Controllers
-
-```Csharp
-[ApiController]
-[Route("[controller]")]
-public class UsersController : ControllerBase
-{
-    private readonly IUserRepository _repo;
-    public UsersController(IUserRepository repo)
-    {
-       _repo = repo;
-    }
-
-    [HttpPost]
-    public ActionResult CreateUser(User user){
-        return Ok(_repo.CreateUser(user));
-    }
-    
-    [HttpGet]
-    public ActionResult GetUser(){
-        return Ok(_repo.GetUsers());
-    }
-    
-
-    [HttpPut]
-    public ActionResult UpdateUser(User user){
-       return Ok(_repo.EditUser(user, user.Id));
-    }
-
-    [HttpGet("{id}")]
-    public ActionResult GetUserById(int id){
-       return Ok(_repo.FindUserById(id));
-    }
-
-    [HttpDelete]
-    public ActionResult DeleteUser(int id){
-        return Ok(_repo.DeleteUser(id));
-    }
+  }
 
 }
 ```
 
-- запустите API: ```dotnet run --project SampleApp.API``` и в средстве Swagger по адресу ```http://localhost:[port]/swagger/index.html``` попробуйте выполнить конечную точку для получения всех пользователей.
+Сделайте запрос к локальной коллекции пользователей в компоненте ```home```;
 
-**Замечание**: для .net9 по умолчанию swagger отсутствует, поэтому надо его подключить пакетом ```Swashbuckle.AspNetCore``` и настроить в Program.cs:
+home.component.ts
+```ts
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import  User from '../../models/user'
+import { UsersLocalService } from '../../services/userslocal.service';
 
-```Csharp
-builder.Services.AddSwaggerGen();
-//...
-var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
-```
-
-Вы должны получить ошибку:
-
-```
-Unable to resolve service for type 'SampleApp.API.Interfaces.IUserRepository' while attempting to activate 'SampleApp.API.Controllers.UsersController'.
-```
-
-Эта ошибка говорит о том, что контроллеру в контруктор требуется реализация интерфейса ```IUserRepository```, которую мы будем получать из контейнера внедрения зависимостей (DI).
-
-# Контейнер внедрения зависимостей (Dependency Injection)
-
-Контроллер ```UsersController``` запрашивает в своем конструкторе 
-
-```Csharp
-    private readonly IUserRepository _repo;
-    public UsersController(IUserRepository repo)
-    {
-       _repo = repo;
-    }
-```
-
-реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервиcов в проекте API.
-
-```Csharp
-builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
-```
-
-- запустите проект и проверьте все конечные точки по пути ```http://localhost:[port]/swagger/index.html```
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
+})
 
 
+export class HomeComponent implements OnInit {
 
-# Validation
+  users: User[] = []
+  title: string = "Home"
 
-## DataAnnotation
+  constructor(private usersLocalService:UsersLocalService) { }
 
-При отравке пост запросов надо проверять модель данных на соответствие валидности. Для этого применяются инструменты: встроенное средства проверки ```DataAnnotation``` и пакет ```FluentValidation```.
-
-Атрибут для проверки минимального длины имени
-```Csharp
-  [MinLength(5,ErrorMessage = "Минимальное длина имени 5")]
-  public string Name {get ;set;} = string.Empty;
-```
-
-Для создания собственного атрибута валидации DataAnnotation создайте папку ```Validations``` и в ней создайте класс ```UserNameMaxLengthValidation```
-
-```Csharp
-public class UserNameMaxLengthValidation : ValidationAttribute
-{
-    private readonly int _maxLength;
-
-    public UserNameMaxLengthValidation(int maxLength) : base($"Максимальная длина имени: {maxLength} ")
-    {
-        _maxLength = maxLength;
-    }
-
-    public override bool IsValid(object? value)
-    {
-        return ((String)value!).Length <= _maxLength;
-    }
+  ngOnInit(): void {
+    this.users = this.usersLocalService.getLocalUsers();
+  }
 }
 ```
 
-Таким образом модель будет выглядеть следующим образом:
+# Управляющие конструкции в шаблоне компонента
 
-```Csharp
-public class User
-{
-    public int Id {get ;set;}
-    
-    [MinLength(5,ErrorMessage = "Минимальное длина имени 5")]
-    [SampleApp.API.Validations.UserNameMaxLengthValidation(10)]
-    public string Name {get ;set;} = string.Empty;
+- в шаблоне компонента ```home``` поместите следующий код:
+
+```html
+<h3> Пользователи </h3>
+
+<ol *ngFor="let user of users">
+    <li> {{user.name}}</li>
+</ol>
+```
+
+или вы можете в шаблоне напрямую обращаться к сервису, если в конструкторе сделаете его ```public```.
+
+```html
+<ul *ngFor="let user of usersLocalService.getLocalUsers()">
+    <li> {{user.name}}</li>
+</ul>
+```
+
+Директива ```*ngFor``` - это директива, которая является простым циклом for. Для включения этой функциональности надо импортировать в компонент ```home``` модуль ```CommonModule```.
+
+
+
+# Получение данных API
+
+- теперь измените компонент home для получение данных о пользователях через API. 
+
+home.component.ts
+
+```ts
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import  User from '../../models/user'
+import getLocalUsers from '../../services/users.service'
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
+})
+
+
+export class HomeComponent implements OnInit {
+
+  users: User[] = []
+  title: string = "Home"
+
+  constructor(private http:HttpClient) { }
+
+  ngOnInit(): void {
+    //this.users = this.usersLocalService.getLocalUsers();
+    this.getUsers();
+  }
+
+  getUsers() {
+    this.http.get<User[]>('http://localhost:5290/User').subscribe({
+      next: response => this.users = response,
+      error: error => console.log(error)
+    })
+  }
+
 }
 ```
 
-## FluentValidation
+# Cors. Подключение и конфигурация
 
-Установите пакет ```FluentValidation```:
+По умолчанию политика браузера такова, что он не разрешает совершать запросы к ресурсу, который находится в другом домене, если принимающая сторона явно не разрешает это. То есть наше приложение Angular не сможет получить ответ от API, пока API не разрешит это.  Эта политика назыаветяс CORS (Cross-Origin Resource Sharing).
 
-```
-dotnet add .\SampleApp.API\ package FluentValidation
-```
+Теперь вернитесь в проект API и разрешите обращение к нему от всех источников и заголовков.
 
-Создайте в папке ```Validations``` новый класс.
-
+Program.cs
 ```Csharp
-    public class FluentValidator : AbstractValidator<User>
-    {
-        public FluentValidator()
-        {
-            RuleFor(u => u.Name).Must(StartsWithCapitalLetter).WithMessage("Имя пользователя должно начинаться с заглавной буквы");
-        }
-        
-        private bool StartsWithCapitalLetter(string username)
-        {
-            return char.IsUpper(username[0]);
-        }
-    }
+builder.Services.AddCors();
+...
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader());
 ```
 
-Для применения валидатора к конечной точки создания пользователя внесите изменения в код контроллера ```UsersController```: 
+**Задание**: создайте ```usersService``` получите данные из API в шаблон компонента ```home```.
+
+# Установка пакета Angular Material
+
+Выполните установку пакета командой ```ng add @angular/material```. При установке вас попросят выбрать тему, типографию и анимацию.
 
 
-```Csharp
-        var validator = new FluentValidator();
-        var result = validator.Validate(user);
-        if(!result.IsValid){
-            throw new Exception($"{result.Errors.First().ErrorMessage}");
-        }
+
+# Вывод пользователей в виде таблицы 
+
+В шаблоне компонента ```home``` применяются элементы из библиотеки пользовательского интерфейса ```Angular Material```. Для отображения таблицы нужно импортировать модель ```MatTableModule```,
+
+```ts
+import {MatTableModule} from '@angular/material/table';
 ```
 
+а также объявить новое свойство ```displayedColumns``` в компоненте ```home```, которое нужно для отображение таблицы.
 
-# Инструменты для тестирования API
-
-1. Протестируйте работу API на примере управления пользователями с помощью встроенного средства Swagger по адресу http://localhost:5137/swagger
-
-2. Postman
-
-3. Запросы .http
-
-Создайте в корнейвой директории папку ```requests``` в которой создайте файл с расширением http. Например, ```getusers.http```
-
-
-```http
-@api = http://localhost:5137
-GET {{api}}/Users
+```ts
+displayedColumns: string[] = ['id', 'name'];
 ```
 
-postuser.http
-```http
-@api = http://localhost:5137
-POST {{api}}/Users
-Content-Type:  application/json
+home.component.html
+```html
+<h1> {{title}}</h1>
 
-{
-  "id": 0,
-  "name": "String" 
-}
+<table mat-table [dataSource]="users" class="mat-elevation-z8">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> Guid </th>
+    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
 ```
 
-Проверка запросов осуществляется с помощью VS Code.
+# Настройка https сертификата для localhost (опция)
 
-**Задание 1**: проверьте все методы валидации при отправке POST запроса на создания пользователя во всех средствах тестирования API
+## Создание центра сертификации
 
-**Задание 2**: у пользователя должна быть роль. Создайте модель ```Role```, а также интерфейс, репозиторий, контроллер, валидации.
+- создайте файл ```openssl.conf```
 
-Фиксация изменений в git: "Создание RolesController"
+```
+[req]
+distinguished_name = req_distinguished_name
+prompt = no
+default_bits = 2048
+default_md = sha256
+[req_distinguished_name]
+CN = localhost
+emailAddress = test@git.scc
+```
 
-**Задание 3**: при запросе post на создание нового ресурса обычно принято отвечать кодом ```201```. Примените метод ```Created``` для возврата ответа типа ```ActionResult```
+- выполните команду только в ```Git Bash``` в директории, где находится файл ```openssl.conf```:
 
-Фиксация изменений в git: Реализация статус-кода 201 в методе контроллера для создания пользователя
-
-# Rebase sprint1 в master
-
-- зафиксируйте sprint1
-- перейдите в master
-- выполните команду git rebase sprint1
+```
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout root_ca.key -out root_ca.crt -config openssl.conf
+```
+На выходе генерируются два файла: ```root_ca.key``` и ```root_ca.crt```
 
 
-# Рефакторинг
+# Генерация приватного ключа
 
-- установите расширение Material Icons для удобства работы и включите с помощью команды ```>material icon``` по F1
-- в настройках settings => exclude: внесите шаблоны для ```bin``` и ```obj```
+```
+openssl genrsa -out localhost.key 2048
+```
+На выходе генерируются ```localhost.key```
 
 
-# Возможные ошибки и их решения
-## Ошибка скачивания пакетов с nuget.org
+# Создание запроc на подписывание ключа к центру сертификации
 
-- dotnet nuget locals all --clear
-- dotnet dev-certs https --check --trust
+```
+openssl req -new -key localhost.key -out localhost.csr -config openssl.conf
+```
+На выходе генерируются ```localhost.csr```
 
- или удалить nuget.config и перезагрузить обязательно
+# Подпись запроса нашим центром сертификации 
+
+- создайте файл ```localhost.ext```
+
+```
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+subjectAltName=@alt_names
+[alt_names]
+DNS.1=localhost
+DNS.2=backend
+IP.1=127.0.0.1
+IP.2= {id}
+```
+**Замечание**: вместо {ip} подставьте ip вашего компьютера
+
+
+- выполните команду
+
+openssl x509 -req \
+-CA root_ca.crt \
+-CAkey root_ca.key \
+-in localhost.csr \
+-out localhost.crt \
+-days 365 \
+-CAcreateserial \
+-extfile localhost.ext
+
+На выходе генерируются ```localhost.crt```
+
+# Установить центр сертификации в Chrome
+
+- Настройки -> Конфиденциальность и безопасность -> Безопасность -> Настроить сертификаты
+
+- найдите доверенные центры сертификации и импортируйте файл ```localhost.crt```
+
+![](http://192.168.4.90/asv/StudPractice-SampleAppSpa/raw/master/images/crt.png)
+
+
+# Настройка ssl для localhost в приложении Angular:
+
+- в файле ```angular.json``` вставьте в ```options``` в секцию ```serve``` c указанием пути к ssl сертификату и ключу.
+
+angular.json
+```json
+   "options": {
+            "sslCert": "./src/crt/localhost.crt",
+            "sslKey": "./src/crt/localhost.key",
+            "ssl": true
+```
+
+- запустите приложение ```npm run start``` или ```ng serve```. Приложение должно работать на https
+
+**Примечание**:
+В этой статье описывается подробно процесс создания самоподписанного сертфиката для localhost.
+https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
