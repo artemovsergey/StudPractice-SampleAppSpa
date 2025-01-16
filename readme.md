@@ -73,12 +73,50 @@ public interface IUserRepository
 
 ## Реализация CRUD в UserRepository
 
-Создайте папку ```Repositories``` и поместите там следующий класс UserLocalRepository, который будет имплементировать (реализовывать) интерфейс ```IUserRepository```.
+Создайте папку ```Repositories``` и поместите там следующий класс ```UsersMemoryRepository```, который будет имплементировать (реализовывать) интерфейс ```IUserRepository```.
 
 ```Csharp
-public class UserLocalRepository : IUserRepository
+public class UsersMemoryRepository : IUserRepository
 {
-    // implements mock
+    public IList<User> Users { get; set; } = new List<User>();
+  
+    public User CreateUser(User user)
+    {
+        user.Id = 1;
+        Users.Add(user);
+        return user;
+    }
+
+    public bool DeleteUser(int id)
+    {
+        var result = FindUserById(id);
+        Users.Remove(result);
+        return true;
+    }
+
+    public User EditUser(User user, int id)
+    {
+        var result = FindUserById(id);
+        result.Name = user.Name;
+        return result;
+    }
+
+    public User FindUserById(int id)
+    {
+        var result = Users.Where(u => u.Id == id).FirstOrDefault();
+
+        if (result == null)
+        {
+            throw new Exception($"Нет пользователя с id = {id}");
+        }
+
+        return result;
+    }
+
+    public List<User> GetUsers()
+    {
+        return (List<User>)Users;
+    }
 }
 ```
 
@@ -164,7 +202,7 @@ Unable to resolve service for type 'SampleApp.API.Interfaces.IUserRepository' wh
 реализацию интерфейса ```IUserRepository```, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости встроенный во фреймворк ASP Core. Для этого надо зарегистрировать сервис в коллекции сервиcов в проекте API.
 
 ```Csharp
-builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
+builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
 ```
 
 - запустите проект и проверьте все конечные точки по пути ```http://localhost:[port]/swagger/index.html```
@@ -183,14 +221,14 @@ builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
   public string Name {get ;set;} = string.Empty;
 ```
 
-Для создания собственного атрибута валидации DataAnnotation создайте папку ```Validations``` и в ней создайте класс ```UserValidator```
+Для создания собственного атрибута валидации DataAnnotation создайте папку ```Validations``` и в ней создайте класс ```UserNameMaxLengthValidation```
 
 ```Csharp
-public class MaxLengthAttribute : ValidationAttribute
+public class UserNameMaxLengthValidation : ValidationAttribute
 {
     private readonly int _maxLength;
 
-    public MaxLengthAttribute(int maxLength) : base($"Максимальная длина имени: {maxLength} ")
+    public UserNameMaxLengthValidation(int maxLength) : base($"Максимальная длина имени: {maxLength} ")
     {
         _maxLength = maxLength;
     }
@@ -207,21 +245,15 @@ public class MaxLengthAttribute : ValidationAttribute
 ```Csharp
 public class User
 {
-    public Guid Id {get ;set;} = Guid.NewGuid();
+    public int Id {get ;set;}
     
     [MinLength(5,ErrorMessage = "Минимальное длина имени 5")]
-    [SampleApp.API.Validations.MaxLength(10)]
+    [SampleApp.API.Validations.UserNameMaxLengthValidation(10)]
     public string Name {get ;set;} = string.Empty;
 }
 ```
 
 ## FluentValidation
-
-Установите пакет ```FluentValidation```:
-
-```
-dotnet add .\SampleApp.API\ package FluentValidation
-```
 
 Установите пакет ```FluentValidation```:
 
@@ -246,7 +278,7 @@ dotnet add .\SampleApp.API\ package FluentValidation
     }
 ```
 
-Для применения валидатора к конечной точки создания пользователя внесите изменения в код контроллера UsersController: 
+Для применения валидатора к конечной точки создания пользователя внесите изменения в код контроллера ```UsersController```: 
 
 
 ```Csharp
@@ -258,30 +290,31 @@ dotnet add .\SampleApp.API\ package FluentValidation
 ```
 
 
-# Postman(Swagger,request.http) для тестирования API
+# Инструменты для тестирования API
 
-- Способ 1
-Протестируйте работу API на примере управления пользователями с помощью встроенного средства Swagger по адресу http://localhost:5290/swagger
+1. Протестируйте работу API на примере управления пользователями с помощью встроенного средства Swagger по адресу http://localhost:5137/swagger
 
-- Cпособ 2. Postman
+2. Postman
 
-- Способ 3. Запросы .http
+3. Запросы .http
 
 Создайте в корнейвой директории папку ```requests``` в которой создайте файл с расширением http. Например, ```getusers.http```
 
 
 ```http
-GET http://localhost:5290/User
+@api = http://localhost:5137
+GET {{api}}/Users
 ```
 
 postuser.http
 ```http
-POST http://localhost:5290/User
-Content-Type: application/json
+@api = http://localhost:5137
+POST {{api}}/Users
+Content-Type:  application/json
 
 {
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "name": "Newuser123213131"
+  "id": 0,
+  "name": "String" 
 }
 ```
 
@@ -289,9 +322,18 @@ Content-Type: application/json
 
 **Задание 1**: проверьте все методы валидации при отправке POST запроса на создания пользователя во всех средствах тестирования API
 
-**Задание 2**: у пользователя должна быть роль. Создайте модель ```Role```, а также интерфейс, репозиторий, контроллер, валидации, напишите unit-тесты для репозитории RoleRepository.
-commit: "Создание RolesController"
+**Задание 2**: у пользователя должна быть роль. Создайте модель ```Role```, а также интерфейс, репозиторий, контроллер, валидации.
+
+Фиксация изменений в git: "Создание RolesController"
 
 **Задание 3**: при запросе post на создание нового ресурса обычно принято отвечать кодом ```201```. Примените метод ```Created``` для возврата ответа типа ```ActionResult```
 
-commit: Реализация статус-кода 201 в методе контроллера для создания пользователя
+Фиксация изменений в git: Реализация статус-кода 201 в методе контроллера для создания пользователя
+
+# Возможные ошибки и их решения
+## Ошибка скачивания пакетов с nuget.org
+
+- dotnet nuget locals all --clear
+- dotnet dev-certs https --check --trust
+
+ или удалить nuget.config и перезагрузить обязательно

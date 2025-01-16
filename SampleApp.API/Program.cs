@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
+builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
 
 var app = builder.Build();
 app.UseSwagger();

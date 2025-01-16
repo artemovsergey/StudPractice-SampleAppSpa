@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SampleApp.API.Entities;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Validations;
 
 namespace SampleApp.API.Controllers;
 
@@ -16,6 +17,13 @@ public class UsersController : ControllerBase
 
     [HttpPost]
     public ActionResult CreateUser(User user){
+
+        var validator = new FluentValidator();
+        var result = validator.Validate(user);
+        if(!result.IsValid){
+            throw new Exception($"{result.Errors.First().ErrorMessage}");
+        }
+
         return Ok(_repo.CreateUser(user));
     }
     
