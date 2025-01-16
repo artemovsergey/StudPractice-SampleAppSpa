@@ -33,6 +33,8 @@
 ```
 
 Для проверки работоспособности приложения запустите API: ```dotnet run --project SampleApp.API```.
+**Замечание**: для горячей перезагрузки сервера примените команду ```dotnet watch run --project SampleApp.API```.
+
 
 У вас по конечной точке http://localhost:5290/weatherforecast должен выводится результат в формате json.
 
