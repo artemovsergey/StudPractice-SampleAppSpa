@@ -1,5 +1,9 @@
 # Sprint 2. Введение в Angular
 
+- проверьте фиксацию изменений в master
+- создайте ветку sprint2
+
+
 # Создание проекта Angular
 
 - установите инструмент командной строки Angular ```npm install -g @angular/cli@latest```
