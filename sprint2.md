@@ -432,3 +432,10 @@ https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
 ```
 
 Всвязи с новым адресом API перенастройте фронтенд.
+
+
+# Rebase sprint2 в master
+
+- зафиксируйте sprint2
+- перейдите в master (возможно, добавьте в gitignore .angular в проекте Angular)
+- выполните команду git rebase sprint1
