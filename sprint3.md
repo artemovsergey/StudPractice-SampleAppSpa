@@ -29,7 +29,7 @@ public class User : Base
 Для этого надо установить пакеты относительно версии .NET, на которой создан проект, следующим способом:
 
 - пакет Microsoft.EntityFrameworkCore
-  `dotnet add .\SampleApp.API\ package Microsoft.EntityFrameworkCore -v 7.0.0`
+  `dotnet add .\SampleApp.API\ package Microsoft.EntityFrameworkCore -v 9.0.0`
 
 для миграций
 
@@ -40,14 +40,14 @@ public class User : Base
 
 - `Npgsql.EntityFrameworkCore.PostgreSQL`
 
-При установке пакетов надо соблюдать версионность относительно версии фреймворка. В данном приложении применяется `net7.0`
+При установке пакетов надо соблюдать версионность относительно версии фреймворка. В данном приложении применяется `net9.0`
 
 **Замечание**: установить пакеты можно несколькими способами:
 
 - dotnet cli
 - установка с помощью графических пакетов
 - Visual Studio
-- через файл `csproj`
+- через файл `csproj``
 
 В результате добавления пакетов в `SampleApp.API.csproj` будет выглядеть следующим образом:
 
@@ -55,23 +55,20 @@ public class User : Base
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.20">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
 </Project>
