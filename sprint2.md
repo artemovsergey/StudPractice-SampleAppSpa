@@ -437,4 +437,4 @@ https://dzen.ru/a/ZQ4nAsQZ6GkuFw7_
 
 - зафиксируйте sprint2
 - перейдите в master (возможно, добавьте в gitignore .angular в проекте Angular)
-- выполните команду git rebase sprint1
+- выполните команду git rebase sprint2
