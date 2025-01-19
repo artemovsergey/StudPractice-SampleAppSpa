@@ -1,19 +1,19 @@
 # Sprint 3 Register and Authentication
 
-# Наследование: базовая модель и базовый контроллер
+# Наследование: базовая модель
 
 Создайте абстрактный класс `Base`, который будет служить целью базовой модели для всех моделей.
 
 ```Csharp
 public abstract class Base
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public DateTime CreatedAt  { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set;} = DateTime.UtcNow;
 }
 ```
 
-Теперь можно отнаследоваться от модели `Base`. Например, класс `User` будет выглядеть следующим образом:
+Теперь можно отнаследоваться от модели `Base`, а все общие свойства убрать из моделей. Например, класс `User` будет выглядеть следующим образом:
 
 ```Csharp
 public class User : Base
