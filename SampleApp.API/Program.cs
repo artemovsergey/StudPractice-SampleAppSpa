@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SampleApp.API.Data;
 using SampleApp.API.Interfaces;
 using SampleApp.API.Repositories;
 
@@ -7,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
 builder.Services.AddCors();
+
+builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlite(builder.Configuration["SQLite"]));
+//builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["PostgreSQL"]));
 
 
 var app = builder.Build();

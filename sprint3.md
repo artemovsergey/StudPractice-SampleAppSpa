@@ -100,14 +100,15 @@ public class SampleAppContext : DbContext
 
 # Конфигурация строки подключения
 
-В ```appsettings.json``` внесите изменения:
+В ```appsettings.json``` внесите новую секцию:
 
 ```json
- "ConnectionStrings": {
-    "MSSQL": "Server=localhost,1433;Database=Colledge;Trust Server Certificate=True;MultipleActiveResultSets=true",
-    "MSSQLAuth": "Server=localhost,1433;Database=Colledge;UserId=yourUsername;Password=yourPassword;MultipleActiveResultSets=true;",
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=Colledge;Trusted_Connection=True;MultipleActiveResultSets=true",
-    "PostgreSQL": "Host=localhost;Port=5432;Database=Colledge;Username=postgres;Password=root"
+  "ConnectionStrings": {
+    "MSSQL": "Server=localhost,1433;Database=SampleApp;Trust Server Certificate=True;MultipleActiveResultSets=true",
+    "MSSQLAuth": "Server=localhost,1433;Database=SampleApp;UserId=yourUsername;Password=yourPassword;MultipleActiveResultSets=true;",
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=SampleApp;Trusted_Connection=True;MultipleActiveResultSets=true",
+    "PostgreSQL": "Host=localhost;Port=5432;Database=SampleApp;Username=postgres;Password=root",
+    "SQLite" : "Data Source =SampleApp.db;Foreign Keys=True;"
   }
 ```
 
@@ -115,13 +116,11 @@ public class SampleAppContext : DbContext
 
 Program.cs
 ```Csharp
-builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["DefaultConnction"]));
+builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlite(builder.Configuration["SQLite"]));
 ```
 
 
 # Миграции
-
-**Замечание**. Перед работой с базой данных надо подготовить модели данных. Вместо типа `Guid` нам теперь нужно использовать тип `int` для свойства `Id`. Это требование EF. Внесите изменения в те места, где раньше использовался тип `Guid`: интерфейсы, репозитории, контроллеры, тесты. Команды `dotnet build` и `dotnet test` должны выполняться успешно.
 
 В рабочей директории создайте первую миграцию.
 
