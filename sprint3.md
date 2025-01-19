@@ -169,10 +169,10 @@ builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlite(builder.Configu
 ```Csharp
 public class UsersLocalRepository : IUserRepository
 {
-    private readonly SampleAppContext _db;
+    private readonly SampleAppContext db;
     public UserRepository(SampleAppContext db)
     {
-        _db = db;
+        db = db;
     }
 
     public List<User> GetUsers()
@@ -184,8 +184,8 @@ public class UsersLocalRepository : IUserRepository
     {
        try
        {
-         _db.Add(user);
-         _db.SaveChanges();
+         db.Add(user);
+         db.SaveChanges();
          return user;
        }
        catch(SqlTypeException ex)
@@ -252,6 +252,7 @@ var user  = new User(){
 - установите библиотеку `Bogus`
 
 - создайте новый контроллер `SeedController` в котором реализуйте следующий метод для генерации пользователей:
+- создайте конструктор и внедрите в него контекст работы с базой данных ```SampleAppContext db```
 
 ```Csharp
     [HttpGet("generate")]
@@ -289,8 +290,8 @@ var user  = new User(){
                 };
                 userToDb.Add(u);
             }
-            _db.Users.AddRange(userToDb);
-            _db.SaveChanges();
+            db.Users.AddRange(userToDb);
+            db.SaveChanges();
         }
         catch(Exception ex)
         {
