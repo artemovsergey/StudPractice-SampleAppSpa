@@ -7,11 +7,11 @@ public class FluentValidator : AbstractValidator<User>
 {
     public FluentValidator()
     {
-        RuleFor(u => u.Name).Must(StartsWithCapitalLetter).WithMessage("Имя пользователя должно начинаться с заглавной буквы");
+        RuleFor(u => u.Login).Must(StartsWithCapitalLetter).WithMessage("Логин пользователя должен начинаться с заглавной буквы");
     }
     
-    private bool StartsWithCapitalLetter(string username)
+    private bool StartsWithCapitalLetter(string login)
     {
-        return char.IsUpper(username[0]);
+        return char.IsUpper(login[0]);
     }
 }
