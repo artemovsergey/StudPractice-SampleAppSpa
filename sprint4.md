@@ -12,8 +12,8 @@
 - установите пакет ```Microsoft.IdentityModel.Tokens``` и ```System.IdentityModel.Tokens.Jwt```: 
 
 ```xml
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1"/>
+<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
+<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1"/>
 ```
 
 
@@ -27,7 +27,7 @@ public class TokenService : ITokenService
     private readonly SymmetricSecurityKey _key;
     public TokenService(IConfiguration config)
     {
-      _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]!));
+      _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenPublicKey"]!));
     }
 
     public string CreateToken(string UserLogin)
@@ -52,12 +52,12 @@ public class TokenService : ITokenService
 }
 ```
 
-**Примечание**: значение `config["TokenKey"]` мы получаем из конфигурации файла `appsettings.json`. Это открытый ключ шифрования. Добавьте данную настройку после настроек логгирования.
+**Примечание**: значение `config["TokenPublicKey"]` мы получаем из конфигурации файла `appsettings.json`. Это открытый ключ шифрования. Добавьте данную настройку после настроек логгирования.
 
 appsettings.json
 ```json
 ...
-"TokenPublicKey":"tokentokentokentokentokentokentokentokentoken"
+"TokenPublicKey":"tokentokentokentokentokentokentokentokentokentokentokentokentokentoken"
 ...
 ```
 
@@ -66,19 +66,15 @@ appsettings.json
 - в модель `User` добавьте новое свойство `public string Token {get; set;}`.
 - создайте миграцию и примените для обновления базы данных.
 - зарегистрируйте в контейнер DI сервис `TokenService`.
-- внедрите объект `ITokenService` в конструктор `UserController`.
-- в методе создания пользователя измените входную модель с ```User``` на ```UserDto``` 
-- в методе создания пользователя сформируйте из данных модели представления объект ```User```, сгенерировав ```PasswordHash``` и ```PasswordSalt```, как это делалось в SeedController
+- внедрите объект `ITokenService` в конструктор `UsersController`.
 - примените метод генерации токена из сервиса к полю `Token` у пользователя.
-- измените валидаторы с проверки поля ```Name``` на проверку поля ```Login```.
 - проверьте конечную точку создания пользователя: у пользователя должны быть хэши паролей и токен
-
+- обновите ```SeedsController```, чтобы он создавал пользователей с токенами
 
 # Middleware
 - установите пакет `Microsoft.AspNetCore.Authentication.JwtBearer`
 
 Program.cs
-
 ```Csharp
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -92,7 +88,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"]!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenPublicKey"]!)),
         };
     });
 ```
@@ -128,7 +124,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 ```
 
-- зарегистрируйте сервис авторизации `builder.Services.AddAuthorization();`, а затем подключите его в конвеейр сразу после процесса аутентификации
+- зарегистрируйте сервис авторизации `builder.Services.AddAuthorization();`, а затем подключите его в конвейер сразу после процесса аутентификации
 
 ```Csharp
 app.UseAuthentication();
@@ -225,7 +221,7 @@ public static class JwtServices
                                 ValidateLifetime = false,
                                 ValidateIssuerSigningKey = true,
 
-                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]!)),
+                                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenPublicKey"]!)),
                             };
                         });
         services.AddAuthorization();
@@ -253,4 +249,4 @@ builder.Services.AddJwtServices(builder.Configuration);
   }
 ```
 
-**Задание 1**: протестируйте jwt-аутентификацию c помошью http-request.
+**Задание**: протестируйте jwt-аутентификацию c помошью http-request.

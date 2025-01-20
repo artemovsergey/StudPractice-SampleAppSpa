@@ -17,7 +17,7 @@ public class TokenService : ITokenService
         {
             throw new Exception("Нет публичного ключа для шифрования токена");
         }
-
+        
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenPublicKey"]!));
     }
     public string CreateToken(string UserLogin)
