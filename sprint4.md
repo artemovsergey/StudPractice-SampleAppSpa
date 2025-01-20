@@ -1,5 +1,9 @@
 # Sprint 4. JWT. Реализация сервиса
 
+- проверьте фиксацию изменений в master
+- создайте ветку sprint4
+
+
 - создайте интерфейс
 
 ```Csharp
@@ -250,3 +254,10 @@ builder.Services.AddJwtServices(builder.Configuration);
 ```
 
 **Задание**: протестируйте jwt-аутентификацию c помошью http-request.
+
+
+# Rebase sprint4 в master
+
+- зафиксируйте sprint4
+- перейдите в master
+- выполните команду git rebase sprint4
