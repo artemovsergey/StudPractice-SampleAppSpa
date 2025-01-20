@@ -1,8 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import User from '../../models/user';
-import { UsersService } from '../../services/users.service';
 import { CommonModule } from '@angular/common';
 import {MatTableModule} from '@angular/material/table';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,15 +12,11 @@ import {MatTableModule} from '@angular/material/table';
 })
 export class HomeComponent implements OnInit {
 
-  users: User[] = []
-  displayedColumns: string[] = ['id', 'name'];
-  public usersService = inject(UsersService)
+  currentUser: any = {}
+  authService = inject(AuthService)
 
-  ngOnInit() {
-    this.usersService.getAll().subscribe({
-      next: (v) => this.users = v,
-      error: (e) => console.error(e),
-      complete: () => console.info('complete') 
-  })
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(r => this.currentUser = r)
   }
+
 }

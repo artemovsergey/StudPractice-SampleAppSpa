@@ -23,6 +23,14 @@ public class UsersController : ControllerBase
        _tokenService = tokenService;
     }
 
+    [Authorize]
+    [HttpPost("Login")]
+    public ActionResult Login(UserRecordDto userDto){
+        var user = _repo.FindUser(userDto.Login);
+        return CheckPasswordHash(userDto, user);
+    }
+
+
     [HttpPost]
     public ActionResult CreateUser(UserRecordDto userDto){
 
@@ -63,6 +71,24 @@ public class UsersController : ControllerBase
     [HttpDelete]
     public ActionResult DeleteUser(int id){
         return Ok(_repo.DeleteUser(id));
+    }
+
+
+    private ActionResult CheckPasswordHash(UserRecordDto userDto, User user)
+    {
+
+        using var hmac = new HMACSHA256(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+            {
+                return Unauthorized($"Неправильный пароль");
+            }
+        }
+
+        return Ok(user);
     }
 
 }

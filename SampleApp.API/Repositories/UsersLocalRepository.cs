@@ -44,5 +44,9 @@ public class UsersLocalRepository(SampleAppContext db) : IUserRepository
         throw new NotImplementedException();
     }
 
-
+    public User FindUser(string login)
+    {
+        var user = db.Users.Where(u => u.Login == login).FirstOrDefault();
+        return user != null ? user : throw new Exception($"Нет пользователя с login = {login}");
+    }
 }

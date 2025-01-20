@@ -1,8 +1,4 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using SampleApp.API.Data;
 using SampleApp.API.Extensions;
 using SampleApp.API.Interfaces;
@@ -22,15 +18,14 @@ builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlite(builder.Configu
 //builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
 
 builder.Services.AddJwtServices(builder.Configuration);
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapOpenApi();
-app.UseHttpsRedirection();
-app.UseCors(option => option.AllowAnyOrigin());
+// app.UseHttpsRedirection();
+app.UseCors(option => option.AllowAnyOrigin().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
