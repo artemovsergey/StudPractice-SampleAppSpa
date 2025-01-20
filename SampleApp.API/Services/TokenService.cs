@@ -1,0 +1,43 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using SampleApp.API.Interfaces;
+
+namespace SampleApp.API.Services;
+
+public class TokenService : ITokenService
+{
+
+    private readonly SymmetricSecurityKey _key;
+    public TokenService(IConfiguration config)
+    {
+
+        if (config["TokenPublicKey"] == "")
+        {
+            throw new Exception("Нет публичного ключа для шифрования токена");
+        }
+
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenPublicKey"]!));
+    }
+    public string CreateToken(string UserLogin)
+    {
+        var claims = new List<Claim>{
+         new Claim(JwtRegisteredClaimNames.Name, UserLogin)
+       };
+
+        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+
+        var tokenDecriptor = new SecurityTokenDescriptor()
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = creds
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDecriptor);
+        return tokenHandler.WriteToken(token);
+
+    }
+}
