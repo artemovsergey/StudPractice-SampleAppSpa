@@ -262,5 +262,58 @@ Verify all the generated assets look correct in the mipmap folders. Examples:
 
 ![](https://developer.android.com/static/codelabs/basic-android-kotlin-compose-training-change-app-icon/img/339af1a3b9ff550c_856.png)
 
+Great work! Now you'll make one more change.
 
-![](https://developer.android.com/static/codelabs/basic-android-kotlin-compose-training-change-app-icon/img/31bc221b0e4b8206_856.png)
+Test your app
+Test that your new app icon appears. Run the app on your device (emulator or physical device).
+Hit the Home button on your device.
+Swipe up to show the All Apps list.
+Look for the app you just updated. You should see the new app icon displayed.
+
+![](https://developer.android.com/static/codelabs/basic-android-kotlin-compose-training-change-app-icon/img/c943f8c37c450545_856.png)
+
+> Note: Depending on your device model, you may see a launcher icon of a different shape. Nevertheless, it should show your foreground layer on top of your background layer with some type of mask applied to it.
+
+Nice job! The new app icon looks great.
+
+Adaptive and legacy launcher icons
+Now that your adaptive icon works well, you may wonder why you can't get rid of all the app icon bitmap images. You still need those files so that your app icon appears high-quality on older versions of Android, which is referred to as backwards compatibility.
+
+For devices running Android 8.0 or higher (API version 26 and above), Adaptive icons can be used (combination of foreground vector drawable, background vector drawable, with an OEM mask applied on top of it). These are the relevant files in your project:
+
+```
+res/drawable/ic_launcher_background.xml
+res/drawable/ic_launcher_foreground.xml
+res/mipmap-anydpi-v26/ic_launcher.xml
+res/mipmap-anydpi-v26/ic_launcher_round.xml
+```
+
+On devices running anything below Android 8.0 (but above the minimum required API level of your app), Legacy launcher icons are used (the bitmap images in the mipmap folders of different density buckets). These are the relevant files in your project:
+
+```kt
+res/mipmap-mdpi/ic_launcher.webp
+res/mipmap-mdpi/ic_launcher_round.webp
+res/mipmap-hdpi/ic_launcher.webp
+res/mipmap-hdpi/ic_launcher_round.webp
+res/mipmap-xhdpi/ic_launcher.png
+res/mipmap-xhdpi/ic_launcher_round.webp
+res/mipmap-xxhdpi/ic_launcher.webp
+res/mipmap-xxhdpi/ic_launcher_round.webp
+res/mipmap-xxxhdpi/ic_launcher.webp
+res/mipmap-xxxhdpi/ic_launcher_round.webp
+```
+
+Essentially, Android falls back to the bitmap images on older devices without adaptive icon support.
+
+Congratulations, you completed all the steps for changing an app icon!
+
+
+# Summary
+Place app icon files in the mipmap resource directories.
+Provide different versions of an app icon bitmap image in each density bucket (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi) for backwards compatibility with older versions of Android.
+Add resource qualifiers onto resource directories to specify resources that should be used on devices with a certain configuration (v24 or v26).
+Vector drawables are Android's implementation of vector graphics. They are defined in XML as a set of points, lines, and curves, along with associated color information. Vector drawables can be scaled for any density without loss of quality.
+Adaptive icons were introduced to the Android platform in API 26. They are made up of a foreground and background layer that follow specific requirements, so that your app icon looks high-quality on a range of devices with different OEM masks.
+Use Image Asset Studio in Android Studio to create legacy and adaptive icons for your app.
+
+
