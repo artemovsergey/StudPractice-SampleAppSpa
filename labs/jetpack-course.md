@@ -1,14 +1,12 @@
 # Jetpack Compose Course
 
-
 #  Unit 1: Your first Android app
-3 pathways | Duration: 10 hours
 
-Learn programming basics and create your first Android app.
-Write simple Kotlin programs that display text output.
-Download and install Android Studio.
-Build an Android app with a simple user interface that displays text and images.
-Run the app on a device or emulator.
+- Изучите основы программирования и создайте свое первое приложение для Android.
+- Напишите простые программы на языке Kotlin, которые выводят текст на экран.
+- Скачайте и установите Android Studio.
+- Создайте приложение для Android с простым пользовательским интерфейсом, отображающим текст и изображения.
+- Запустите приложение на устройстве или в эмуляторе.
 
 
 # Unit 2: Building app UI
