@@ -9,6 +9,12 @@ import { ErrorServerComponent } from "./errors/error-server/error-server.compone
 import { SignComponent } from "./sign/sign.component";
 import { authGuard } from "../guards/auth.guard";
 import { preventUnsavedChangesGuard } from "../guards/prevent-unsaved-changes.guard";
+import { AddressFormComponent } from "./address-form/address-form.component";
+import { NavigationComponent } from "./navigation/navigation.component";
+import { TableComponent } from "./table/table.component";
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { DragComponent } from "./drag/drag.component";
+import { TreeComponent } from "./tree/tree.component";
 
 
 export const routes: Routes = [
@@ -24,6 +30,7 @@ export const routes: Routes = [
         ]
     },
 
+    { path: 'test', component: DashboardComponent },
     { path: 'home', component: HomeComponent },
     { path: 'auth', component: AuthComponent },
     { path: 'not-found', component: NotFountComponent },

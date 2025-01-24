@@ -1,6 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use '@angular/material' as mat;
+@use '../theme-colors' as my-theme; // location of generated file
+
+
 @import '../node_modules/material-design-icons-iconfont/dist/material-design-icons.css';
 
-html, body { height: 100%; }
+html { 
+
+    @include mat.theme((
+        color: (
+          primary: my-theme.$primary-palette,
+          tertiary: my-theme.$tertiary-palette,
+          theme-type: light,
+        ),
+        typography: Roboto,
+        density: -1,
+      ));
+
+    height: 100%;
+    background-color : var(--mat-sys-surface);
+
+
+
+}
 body { margin: 0rem; font-family: Roboto, "Helvetica Neue", sans-serif; }

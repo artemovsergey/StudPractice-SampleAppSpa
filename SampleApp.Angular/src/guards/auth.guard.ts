@@ -18,13 +18,13 @@ export class authGuard implements CanActivate{
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
 
-    // const storedUser = JSON.parse(localStorage.getItem("user")!);
-    // if (storedUser) {
-    //   this.authService.currentUserSource.next(storedUser);
-    // }
-    // else{
-    //   this.authService.currentUserSource.next(null!);
-    // }
+    const storedUser = JSON.parse(localStorage.getItem("user")!);
+    if (storedUser) {
+      this.authService.currentUser$.next(storedUser);
+    }
+    else{
+      this.authService.currentUser$.next(null!);
+    }
 
     return this.authService.currentUser$.pipe(
       map(user => {

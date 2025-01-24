@@ -19,6 +19,15 @@
         Пользователи
     </button>
 
+
+    <button    mat-flat-button routerLink = '/test' [color]="color('users')">
+        <mat-icon>
+            nav
+        </mat-icon>
+        Меню
+    </button>
+
+
 <!--    <button *ngIf="authService.currentUser$ | async" mat-button type="button" (click)="authService.logout()">-->
 <!--        <mat-icon>-->
 <!--          logout-->
