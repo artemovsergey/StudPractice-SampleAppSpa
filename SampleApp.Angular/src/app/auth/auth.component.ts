@@ -8,10 +8,11 @@ import { MatInputModule } from '@angular/material/input'
 import { AuthService } from '../../services/auth.service';
 import User from '../../models/user';
 import { Router } from '@angular/router';
+import { AppModule } from '../../_modules/app.module';
 
 @Component({
   selector: 'app-auth',
-  imports: [CommonModule, MatInputModule, FormsModule, MatFormFieldModule, MatIconModule, MatButtonModule],
+  imports: [AppModule, CommonModule, MatInputModule, FormsModule, MatFormFieldModule, MatIconModule, MatButtonModule],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss'
 })
