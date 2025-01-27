@@ -12,6 +12,13 @@ public class User : Base
     public required string Login { get; set; }
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
-
     public string Token {get; set;} = string.Empty;
+
+
+    // navigation property
+    public IEnumerable<Micropost>? Microposts {get; set;}
+
+    public int RoleId {get; set;}
+    public Role? Role {get; set;}
+    
 }

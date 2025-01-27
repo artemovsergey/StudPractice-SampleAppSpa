@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SampleApp.API.Data;
 
@@ -10,9 +11,11 @@ using SampleApp.API.Data;
 namespace SampleApp.API.Migrations
 {
     [DbContext(typeof(SampleAppContext))]
-    partial class SampleAppContextModelSnapshot : ModelSnapshot
+    [Migration("20250126055143_Microposts")]
+    partial class Microposts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -43,27 +46,6 @@ namespace SampleApp.API.Migrations
                     b.ToTable("Microposts");
                 });
 
-            modelBuilder.Entity("SampleApp.API.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("SampleApp.API.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -89,9 +71,6 @@ namespace SampleApp.API.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -100,8 +79,6 @@ namespace SampleApp.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -113,17 +90,6 @@ namespace SampleApp.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SampleApp.API.Entities.User", b =>
-                {
-                    b.HasOne("SampleApp.API.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("SampleApp.API.Entities.User", b =>

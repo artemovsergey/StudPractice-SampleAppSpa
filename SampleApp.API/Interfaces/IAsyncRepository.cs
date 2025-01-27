@@ -6,4 +6,5 @@ public interface IAsyncRepository<T> where T : class
     Task Create(T entity);
     Task<T> Update(T entity);
     Task<bool> DeleteAsync(int id);
+    Task<IEnumerable<T>> GetAll();
 }
