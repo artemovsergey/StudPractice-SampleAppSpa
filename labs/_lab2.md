@@ -128,12 +128,14 @@ MyProject/
             strings.xml
 ```
 
-As you can see in this example, the res/ directory contains all the resources in subdirectories, which includes a drawable/ directory for an image resource, a mipmap/ directory for launcher icons, and a values/ directory for string resources. To learn more about the usage, format, and syntax for app resources, see Resource types overview.
+Как видно из примера, каталог res/ содержит все ресурсы в подкаталогах, в том числе каталог drawable/ для ресурсов изображений, каталог mipmap/ для иконок пусковой установки и каталог values/ для строковых ресурсов. Чтобы узнать больше об использовании, формате и синтаксисе ресурсов приложений, смотрите раздел Обзор типов ресурсов.
 
-Accessing resources
-Jetpack Compose can access the resources defined in your Android project. Resources can be accessed with resource IDs that are generated in your project's R class.
+Доступ к ресурсам
+Jetpack Compose может получить доступ к ресурсам, определенным в вашем проекте Android. Доступ к ресурсам осуществляется с помощью идентификаторов ресурсов, которые генерируются в R-классе вашего проекта.
 
-An R class is an automatically generated class by Android that contains the IDs of all resources in the project. In most cases, the resource ID is the same as the filename. For example, the image in the previous file hierarchy can be accessed with this code:
+R-класс - это автоматически генерируемый Android класс, который содержит идентификаторы всех ресурсов в проекте. В большинстве случаев идентификатор ресурса совпадает с именем файла. Например, к изображению в предыдущей иерархии файлов можно получить доступ с помощью этого кода:
+
+Переведено с помощью DeepL.com (бесплатная версия)
 
 ![](https://developer.android.com/static/codelabs/basic-android-kotlin-compose-add-images/img/7f95dd836a249cdc_856.png)
 

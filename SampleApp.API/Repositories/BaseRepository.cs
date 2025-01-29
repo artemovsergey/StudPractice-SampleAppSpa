@@ -46,7 +46,7 @@ public class BaseRepository<T>(SampleAppContext db) : IAsyncRepository<T> where 
 
     public async Task<IEnumerable<T>> GetAll()
     {
-        return await db.Set<T>().Include(t => (t as I).).ToListAsync();
+        return await db.Set<T>().Include(t => t.Roles).ToListAsync();
     }
 
 
