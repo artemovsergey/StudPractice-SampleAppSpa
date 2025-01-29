@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
@@ -9,7 +11,14 @@ using SampleApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+
+// лучше использовать Dto + Automapper
+builder.Services.AddControllers()
+    .AddJsonOptions(options => 
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+
 builder.Services.AddOpenApi();
 
 // builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
@@ -17,8 +26,7 @@ builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<BaseRepository<Micropost>>();
 builder.Services.AddScoped<BaseRepository<Role>>();
-
-
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddCors();
 builder.Services.AddDbContext<SampleAppContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SQLite")));
 //builder.Services.AddDbContext<SampleAppContext>(o => o.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
@@ -30,7 +38,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapOpenApi();
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors(option => option.AllowAnyOrigin().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();

@@ -40,7 +40,7 @@ namespace SampleApp.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Microposts");
+                    b.ToTable("Microposts", (string)null);
                 });
 
             modelBuilder.Entity("SampleApp.API.Entities.Role", b =>
@@ -61,7 +61,7 @@ namespace SampleApp.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("SampleApp.API.Entities.User", b =>
@@ -103,7 +103,7 @@ namespace SampleApp.API.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("SampleApp.API.Entities.Micropost", b =>

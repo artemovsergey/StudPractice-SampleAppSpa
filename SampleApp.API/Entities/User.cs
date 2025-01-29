@@ -14,11 +14,10 @@ public class User : Base
     public required byte[] PasswordSalt { get; set; }
     public string Token {get; set;} = string.Empty;
 
-
     // navigation property
     public IEnumerable<Micropost>? Microposts {get; set;}
 
-    public int RoleId {get; set;}
+    public int RoleId {get; set;} = 0;
     public Role? Role {get; set;}
     
 }
