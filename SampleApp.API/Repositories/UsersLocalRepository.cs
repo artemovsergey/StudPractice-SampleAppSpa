@@ -1,4 +1,5 @@
 using System.Data.SqlTypes;
+using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
 using SampleApp.API.Interfaces;
@@ -11,6 +12,12 @@ public class UsersLocalRepository(SampleAppContext db) : IUserRepository
     {
         return db.Users.ToList();
     }
+
+    public User GetUserWithMicropost(int id){
+        var user = db.Users.Include(u => u.Microposts).Where(u => u.Id == id).FirstOrDefault();
+        return user != null ? user : throw new Exception($"Нет пользователя с login = {id}");
+    }
+
     public User CreateUser(User user)
     {
         try

@@ -19,57 +19,71 @@ public class UsersController : ControllerBase
 
     public UsersController(IUserRepository repo, ITokenService tokenService)
     {
-       _repo = repo;
-       _tokenService = tokenService;
+        _repo = repo;
+        _tokenService = tokenService;
     }
 
     [Authorize]
     [HttpPost("Login")]
-    public ActionResult Login(UserRecordDto userDto){
+    public ActionResult Login(UserRecordDto userDto)
+    {
         var user = _repo.FindUser(userDto.Login);
         return CheckPasswordHash(userDto, user);
     }
 
 
     [HttpPost]
-    public ActionResult CreateUser(UserRecordDto userDto){
+    public ActionResult CreateUser(UserRecordDto userDto)
+    {
 
-        var user  = new User(){
-             Login = userDto.Login,
-             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
-             PasswordSalt = hmac.Key,
-             Name = "",
-             Token = _tokenService.CreateToken(userDto.Login)
+        var user = new User()
+        {
+            Login = userDto.Login,
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
+            PasswordSalt = hmac.Key,
+            Name = "",
+            Token = _tokenService.CreateToken(userDto.Login)
         };
 
         var validator = new FluentValidator();
         var result = validator.Validate(user);
-        if(!result.IsValid){
+        if (!result.IsValid)
+        {
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
 
         return Ok(_repo.CreateUser(user));
     }
-    
+
     [Authorize]
     [HttpGet]
-    public ActionResult GetUser(){
+    public ActionResult GetUser()
+    {
         return Ok(_repo.GetUsers());
     }
-    
+
+    [HttpGet("{id}/microposts")]
+    public ActionResult GetUserWithMicroposts(int id)
+    {
+        return Ok(_repo.GetUserWithMicropost(id));
+    }
+
 
     [HttpPut]
-    public ActionResult UpdateUser(User user){
-       return Ok(_repo.EditUser(user, user.Id));
+    public ActionResult UpdateUser(User user)
+    {
+        return Ok(_repo.EditUser(user, user.Id));
     }
 
     [HttpGet("{id}")]
-    public ActionResult GetUserById(int id){
-       return Ok(_repo.FindUserById(id));
+    public ActionResult GetUserById(int id)
+    {
+        return Ok(_repo.FindUserById(id));
     }
 
     [HttpDelete]
-    public ActionResult DeleteUser(int id){
+    public ActionResult DeleteUser(int id)
+    {
         return Ok(_repo.DeleteUser(id));
     }
 

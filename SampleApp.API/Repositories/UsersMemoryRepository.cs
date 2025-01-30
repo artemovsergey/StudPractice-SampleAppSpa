@@ -49,4 +49,9 @@ public class UsersMemoryRepository : IUserRepository
     {
         return (List<User>)Users;
     }
+
+    public User GetUserWithMicropost(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

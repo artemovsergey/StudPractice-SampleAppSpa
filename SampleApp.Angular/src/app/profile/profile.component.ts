@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs';
+import { UsersService } from '../../services/users.service';
+import Micropost from '../../models/micropsots';
+import User from '../../models/user';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -9,19 +13,24 @@ import { take } from 'rxjs';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {
-//@ViewChild('editForm') editForm: NgForm
+export class ProfileComponent implements OnInit {
 
   // @ts-ignore
   user: User
+  microposts: Micropost[] = []
 
-  constructor(private authService: AuthService) {
-    this.authService.currentUser$.pipe(take(1)).subscribe(u => this.user = u)
+  authService = inject(AuthService)
+  userService = inject(UsersService)
+  activateRoute = inject(ActivatedRoute)
+
+  ngOnInit() {
+    this.user.id = this.activateRoute.snapshot.params["id"];
+    this.authService.currentUser$.pipe(take(1)).subscribe(r => {this.user = r;this.getMicroposts(r.id)})
   }
 
-  // @HostListener('window:beforeunload',['event']) unloadNotification($event: any){
-  //   if(this.editForm.dirty){
-  //     $event.returnValue = true;
-  //   }
-  // }
+  getMicroposts(id: number){
+    this.userService.getUserWithMicropost(this.user.id).subscribe(r => this.microposts = r.microposts)
+  }
+
+
 }

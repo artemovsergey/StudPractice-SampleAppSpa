@@ -1,1 +1,18 @@
-<p> Профиль пользователя: {{user.login}}</p>
+<div class="profile">
+    @if(user){
+        <p> Профиль пользователя1: {{user.login}}</p>
+
+        @if(this.microposts.length > 0){
+            @for (m of this.microposts; track $index) {
+                <ul>
+                    <li> Сообщение: {{m.content}} </li>
+                </ul>
+            }
+        }
+
+    }
+    @else {
+        <h2> Нет пользователя </h2>
+    }
+</div>
+

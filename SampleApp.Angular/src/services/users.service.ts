@@ -19,6 +19,10 @@ export class UsersService implements IUserRepository {
 //     return this.http.get<User[]>(`${environment.baseUrl}/role/${roleId}/Users`)
 //   }
 
+  getUserWithMicropost(id: number): Observable<User> {
+    return this.http.get<User>(`${environment.baseUrl}/Users/${id}/microposts`)
+  }
+
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(`${environment.baseUrl}/Users`)
   }
