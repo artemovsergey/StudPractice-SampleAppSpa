@@ -1,6 +1,0 @@
-@if(authService.currentUser$ | async){
-    <h2> Hello {{ currentUser.login }} </h2>
-}
-@else{
-   <h2>Пользователь не авторизован</h2> 
-}

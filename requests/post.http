@@ -1,8 +1,0 @@
-@api = http://localhost:5137
-POST {{api}}/Users
-Content-Type:  application/json
-
-{
-  "id": 0,
-  "name": "String" 
-}
